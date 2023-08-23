@@ -13,8 +13,11 @@ dependencies:
   flutter:
     sdk: flutter
 
-
+  speech_to_text: ^6.3.0
   cupertino_icons: ^1.0.2
+  http: ^1.1.0
+  flutter_tts: ^3.7.0
+  path_provider: ^2.1.0
 
 dev_dependencies:
   flutter_test:
