@@ -12,16 +12,17 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Future.delayed(const Duration(milliseconds: 100));
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Maya',
+      title: 'Maya AI',
       theme: ThemeData.light(useMaterial3: true).copyWith(
         scaffoldBackgroundColor: Pallete.whiteColor,
         appBarTheme: const AppBarTheme(
           backgroundColor: Pallete.whiteColor
         )
       ),
-      home: HomePage(),
+      home: const HomePage(),
     );
   }
 }

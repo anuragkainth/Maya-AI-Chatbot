@@ -10,6 +10,7 @@
         </intent>
     </queries>
     <application
+        android:requestLegacyExternalStorage="true"
         android:label="gpt_app"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">

@@ -40,7 +40,7 @@ class OpenAIServices {
             final res = dallEAPI(prompt);
             return res;
           default:
-            final res = await chatGPTApi('$prompt . give response in less than 40 words.');
+            final res = await chatGPTApi('You are a AI voice assistant called Maya, built by Anurag, here is some prompt for you: $prompt . give response in less than 50 words.');
             return res;
         }
       }
