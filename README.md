@@ -36,7 +36,7 @@ To get started with this project, clone this repository and install all the depe
 
 ## API Key Configuration
 
-To use this project, you need to add your OpenAI API key in the secrets.dart file.
+To use this project, you need to add your OpenAI API key in the `lib/secrets.dart` file.
 
 
 ## Screenshots
