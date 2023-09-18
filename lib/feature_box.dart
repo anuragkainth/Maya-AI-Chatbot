@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 class FeatureBox extends StatelessWidget {
   final Color color;
+  final Color? textColor;
   final String headerText;
   final String descriptionText;
   const FeatureBox({
@@ -10,6 +11,7 @@ class FeatureBox extends StatelessWidget {
     required this.color,
     required this.headerText,
     required this.descriptionText,
+    this.textColor
   });
 
   @override
@@ -35,9 +37,9 @@ class FeatureBox extends StatelessWidget {
               alignment: Alignment.centerLeft,
               child: Text(
                 headerText,
-                style: const TextStyle(
+                style: TextStyle(
                   fontFamily: 'Cera Pro',
-                  color: Pallete.blackColor,
+                  color: textColor ?? Pallete.blackColor,
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
                 ),
@@ -48,9 +50,9 @@ class FeatureBox extends StatelessWidget {
               padding: const EdgeInsets.only(right: 20),
               child: Text(
                 descriptionText,
-                style: const TextStyle(
+                style: TextStyle(
                   fontFamily: 'Cera',
-                  color: Pallete.blackColor,
+                  color: textColor ?? Pallete.blackColor,
                 ),
               ),
             ),

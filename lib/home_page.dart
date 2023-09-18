@@ -1,4 +1,3 @@
-
 import 'dart:typed_data';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -15,7 +14,6 @@ import 'dart:io';
 import 'package:animate_do/animate_do.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 
-
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
 
@@ -24,7 +22,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-
   final speechToText = SpeechToText();
   final FlutterTts flutterTts = FlutterTts();
   String lastWords = "";
@@ -35,10 +32,31 @@ class _HomePageState extends State<HomePage> {
   int delay = 200;
   bool loadingAnimationOn = false;
 
+  bool isPlaying = false;
+
   @override
   void initState() {
     super.initState();
     initSpeechToText();
+
+    flutterTts.setStartHandler(() {
+      setState(() {
+        isPlaying = true;
+      });
+    });
+
+    flutterTts.setCompletionHandler(() {
+      setState(() {
+        isPlaying = false;
+      });
+    });
+
+    flutterTts.setErrorHandler((msg) {
+      setState(() {
+        isPlaying = false;
+      });
+    });
+
     // initTextToSpeech();
   }
 
@@ -52,7 +70,8 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> _startListening() async {
-    await speechToText.listen(onResult: _onSpeechResult, listenFor: const Duration(seconds: 60));
+    await speechToText.listen(
+        onResult: _onSpeechResult, listenFor: const Duration(seconds: 60));
     setState(() {});
   }
 
@@ -72,25 +91,26 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> saveImageToDownloads(String url) async {
-    var response = await Dio().get(
-        url,
-        options: Options(responseType: ResponseType.bytes));
 
-    if(response.statusCode == 200){
-      await ImageGallerySaver.saveImage(
-          Uint8List.fromList(response.data),
-          quality: 60,
-          name: "image"
-      );
+    setState(() {
+      loadingAnimationOn = true;
+    });
+    var response = await Dio()
+        .get(url, options: Options(responseType: ResponseType.bytes));
+
+    if (response.statusCode == 200) {
+      await ImageGallerySaver.saveImage(Uint8List.fromList(response.data),
+          quality: 60, name: "image");
+
+      setState(() {
+        loadingAnimationOn = false;
+      });
 
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Image Saved to Gallery!'))
-      );
-    }
-    else{
-      ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('image Not Saved: Some Error occurred'))
-      );
+          const SnackBar(content: Text('Image Saved to Photos!')));
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text('image Not Saved: Some Error occurred')));
     }
     // print(result);
   }
@@ -101,8 +121,10 @@ class _HomePageState extends State<HomePage> {
     speechToText.stop();
     flutterTts.stop();
   }
+
   @override
   Widget build(BuildContext context) {
+    Future.delayed(Duration(seconds: 4));
     return Scaffold(
       appBar: AppBar(
         title: BounceInDown(child: const Text('Maya Ai')),
@@ -118,37 +140,48 @@ class _HomePageState extends State<HomePage> {
                 children: [
                   Center(
                     child: Container(
-                      height: 120,
-                      width: 120,
-                      margin: const EdgeInsets.only(top: 4),
+                      height: 180,
+                      width: 180,
+                      // margin: const EdgeInsets.only(top: 0),
                       decoration: BoxDecoration(
-                        color: Colors.yellow.shade800,
-                        shape: BoxShape.circle
+                        color: Colors.orange.shade100,
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.orange.shade100.withOpacity(1),
+                            spreadRadius: 15,
+                            blurRadius: 40,
+                            offset: const Offset(0, 0), // changes position of shadow
+                          ),
+                        ],
                       ),
                     ),
                   ),
                   Container(
-                    height: 140,
-                    decoration: const BoxDecoration(
-                      shape: BoxShape.circle,
-                      image: DecorationImage(image: AssetImage('assets/images/Maya-ancient.png'))
-                    ),
+                    height: 165,
+                    margin: const EdgeInsets.only(top: 7.5),
+                    decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        image: DecorationImage(
+                            image: AssetImage(isPlaying
+                                ? 'assets/images/maya-speak.gif'
+                                : 'assets/images/maya-anime-1-4.jpg'))),
                   )
                 ],
               ),
             ),
             // <====== Voice input Animation ======>
-            if(speechToText.isListening && loadingAnimationOn == false)
+            if (speechToText.isListening && loadingAnimationOn == false)
               Padding(
                 padding: const EdgeInsets.only(top: 35.0, bottom: 10.0),
                 child: LoadingAnimationWidget.staggeredDotsWave(
-                  color: Pallete.secondSuggestionBoxColor,
+                  color: Colors.yellow.shade800,
                   size: 40,
                 ),
               ),
 
             // <====== Loading Animation ======>
-            if(loadingAnimationOn == true)
+            if (loadingAnimationOn == true)
               Padding(
                 padding: const EdgeInsets.only(top: 35.0, bottom: 10.0),
                 child: LoadingAnimationWidget.flickr(
@@ -161,106 +194,166 @@ class _HomePageState extends State<HomePage> {
             // <============ Chat Bubble =============>
             FadeInRight(
               child: Visibility(
-                visible: generatedImageUrl == null && speechToText.isNotListening && loadingAnimationOn == false,
+                visible: generatedImageUrl == null &&
+                    speechToText.isNotListening &&
+                    loadingAnimationOn == false,
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                  margin: const EdgeInsets.symmetric(horizontal: 40).copyWith(
-                    top: 30
-                  ),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                  margin: const EdgeInsets.symmetric(horizontal: 40)
+                      .copyWith(top: 30),
                   decoration: BoxDecoration(
-                    border: Border.all(
-                      color: Pallete.borderColor,
-                    ),
-                    borderRadius: BorderRadius.circular(20).copyWith(
-                      topLeft: Radius.zero
-                    )
-                  ),
+                      border: Border.all(
+                        color: Pallete.borderColor,
+                      ),
+                      borderRadius: BorderRadius.circular(20)
+                          .copyWith(topLeft: Radius.zero)),
                   child: Padding(
                     padding: const EdgeInsets.symmetric(vertical: 10),
                     child: Text(
-                      generatedContent == null ? 'Good Morning, what task can I do for you?'
-                      : generatedContent!,
-                    style: TextStyle(
-                      color: Pallete.mainFontColor,
-                      fontSize: generatedContent == null ? 25 : 18,
-                      fontFamily: 'Cera'
-                    ),),
+                      generatedContent == null
+                          ? "🙏 Anurag, I'm Maya💫!!\nIs there anything I can do for you?"
+                          : generatedContent!,
+                      style: TextStyle(
+                          color: Pallete.mainFontColor,
+                          fontSize: generatedContent == null ? 25 : 18,
+                          fontFamily: 'Cera'),
+                    ),
                   ),
                 ),
               ),
             ),
             // <============ Image generated by Dall-E =============>
             if (generatedImageUrl != null)
-              Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: TextButton(
-                  onPressed: (){},
-                  onLongPress: () {
-                    saveImageToDownloads(
-                        generatedImageUrl!);
-                  },
-                  child: Container(
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: Pallete.mainFontColor,
-                        width: 1.0,
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  const Padding(
+                    padding: EdgeInsets.only(left: 10.0, right: 10.0, top: 25.0),
+                    child: Text(
+                      'Your Image is ready, have a look!!',
+                      style: TextStyle(
+                        fontFamily: 'Cera',
+                        color: Color(0xff271a2b),
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
                       ),
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(20),
-                      child: Image.network(generatedImageUrl!),
                     ),
                   ),
-                ),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 10.0, right: 10.0, bottom: 10.0),
+                    child: TextButton(
+                      onPressed: () {},
+                      onLongPress: () {
+                        saveImageToDownloads(generatedImageUrl!);
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            color: Pallete.mainFontColor,
+                            width: 1.0,
+                          ),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(20),
+                          child: Image.network(generatedImageUrl!),
+                        ),
+                      ),
+                    ),
+                  ),
+                  TextButton(
+                    onPressed: (){
+                      saveImageToDownloads(generatedImageUrl!);
+                    },
+                    child: Container(
+                      width: 140,
+                      height: 40,
+                      decoration: BoxDecoration(
+                        color: const Color(0xff271a2b),
+                        borderRadius: BorderRadius.circular(8)
+                      ),
+                      child: const Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            'Save',
+                            style: TextStyle(
+                              fontFamily: 'Cera',
+                              color: Colors.white,
+                              fontSize: 25,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          Icon(Icons.download, color: Colors.white,size: 27,)
+                        ],
+                      ),
+                    ),
+                  )
+                ],
               ),
 
             // <============ Suggestion List =============>
             SlideInLeft(
               child: Visibility(
-                visible: generatedContent == null && generatedImageUrl == null && loadingAnimationOn == false && speechToText.isNotListening,
+                visible: generatedContent == null &&
+                    generatedImageUrl == null &&
+                    loadingAnimationOn == false &&
+                    speechToText.isNotListening,
                 child: Container(
-                  padding: const EdgeInsets.symmetric(vertical: 16).copyWith(
-                    left: 32
-                  ),
+                  padding: const EdgeInsets.symmetric(vertical: 16)
+                      .copyWith(left: 36),
                   alignment: Alignment.centerLeft,
-                  child: const Text('Here are a few features', style: TextStyle(
-                    fontFamily: 'Cera',
-                    color: Pallete.mainFontColor,
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),),
+                  child: const Text(
+                    'Here are few things I can do 😎 👇',
+                    style: TextStyle(
+                      fontFamily: 'Cera',
+                      color: Pallete.mainFontColor,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                 ),
               ),
             ),
             //<============ Feature Box list =============>
             Visibility(
-              visible: generatedContent == null && generatedImageUrl == null && loadingAnimationOn == false && speechToText.isNotListening,
+              visible: generatedContent == null &&
+                  generatedImageUrl == null &&
+                  loadingAnimationOn == false &&
+                  speechToText.isNotListening,
               child: Column(
                 children: [
                   SlideInLeft(
                     delay: Duration(milliseconds: start),
                     child: const FeatureBox(
-                        color: Pallete.firstSuggestionBoxColor,
-                        headerText: 'ChatGPT',
-                        descriptionText: 'A smart way to stay organized and informed with ChatGPT'),
+                        color: Color(0xff514852),
+                        // color: Colors.yellow,
+                        textColor: Colors.white,
+                        headerText: 'Ask me Anything 🔥',
+                        descriptionText:
+                            'A smart way to stay organized and informed with MAYA X GPT'),
                   ),
                   SlideInLeft(
                     delay: Duration(milliseconds: start + delay),
                     child: const FeatureBox(
-                      color: Pallete.secondSuggestionBoxColor,
-                      headerText: 'Dall-E',
+                      color: Color(0xff772926),
+                      // color: Pallete.secondSuggestionBoxColor,
+                      textColor: Colors.white,
+                      headerText: 'Creative Images ✨',
                       descriptionText:
-                      'Get inspired and stay creative with your personal assistant powered by Dall-E',
+                          'Get inspired and stay creative, your own voice to image with MAYA X Dall-E',
                     ),
                   ),
                   SlideInLeft(
                     delay: Duration(milliseconds: start + 2 * delay),
                     child: const FeatureBox(
-                      color: Pallete.thirdSuggestionBoxColor,
-                      headerText: 'Smart Voice Assistant',
+                      color: Color(0xff6c9393),
+                      // color: Pallete.thirdSuggestionBoxColor,
+                      textColor: Colors.white,
+                      headerText: 'Smart Voice Assistant 🧠',
                       descriptionText:
-                      'Get the best of both worlds with a voice assistant powered by Dall-E and ChatGPT',
+                          'Get the best of both worlds with a voice assistant powered by Dall-E X ChatGPT',
                     ),
                   ),
                 ],
@@ -272,11 +365,17 @@ class _HomePageState extends State<HomePage> {
       floatingActionButton: ZoomIn(
         delay: Duration(milliseconds: start + 3 * delay),
         child: FloatingActionButton(
-          backgroundColor: Pallete.firstSuggestionBoxColor,
+          foregroundColor: Colors.white,
+          backgroundColor: const Color(0xff271a2b),
           onPressed: () async {
-            if(await speechToText.hasPermission && speechToText.isNotListening){
+            if (await speechToText.hasPermission &&
+                speechToText.isNotListening) {
+              setState(() {
+                isPlaying = false;
+                flutterTts.stop();
+              });
               await _startListening();
-            } else if(speechToText.isListening){
+            } else if (speechToText.isListening) {
               setState(() {
                 loadingAnimationOn = true;
               });
@@ -284,7 +383,7 @@ class _HomePageState extends State<HomePage> {
               print(lastWords);
               final speech = await openAIService.isArtPrompt(lastWords);
 
-              if(speech.contains('https')){
+              if (speech.contains('https')) {
                 generatedImageUrl = speech;
                 generatedContent = null;
                 loadingAnimationOn = false;
@@ -294,6 +393,10 @@ class _HomePageState extends State<HomePage> {
                 generatedContent = speech;
                 loadingAnimationOn = false;
                 setState(() {});
+              }
+              if(generatedContent == null){
+                await systemSpeak("Offcourse, here is your AI generated Image");
+              }else {
                 await systemSpeak(speech);
               }
               // print(speech);

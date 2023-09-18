@@ -21,7 +21,7 @@ class OpenAIServices {
             {
               "role": "user",
               "content":
-                  "Does this message wants to generate an AI picture, image, art or anything similar?: $prompt . Simply answer with a yes or a no."
+                  "Does this message have words 'generate' and 'image' together in it?: $prompt . Simply answer with a yes or a no."
             },
           ]
         }),
@@ -40,7 +40,7 @@ class OpenAIServices {
             final res = dallEAPI(prompt);
             return res;
           default:
-            final res = await chatGPTApi('You are a AI voice assistant called Maya, built by Anurag, here is some prompt for you: $prompt . give response in less than 50 words.');
+            final res = await chatGPTApi('You are a AI voice assistant called Maya, built by Anurag Kainth, here is some prompt for you: $prompt. response in maximum 50 words');
             return res;
         }
       }
