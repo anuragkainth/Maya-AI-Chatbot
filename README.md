@@ -40,7 +40,13 @@ To use this project, you need to add your OpenAI API key in the secrets.dart fil
 
 
 ## Screenshots
-## Video Demo
+
+<p float="left">
+  <img src="https://github.com/anuragkainth/Maya-AI-Chatbot/assets/94080341/631131ba-5f82-40d2-bbd7-7d9c36365587" width="300" />
+  <img src="https://github.com/anuragkainth/Maya-AI-Chatbot/assets/94080341/144b0a7b-3f27-4199-97b4-8d3aa9970331" width="300" />
+  <img src="https://github.com/anuragkainth/Maya-AI-Chatbot/assets/94080341/0d23d4e1-2a78-48e1-ad23-474c621722eb" width="300" />
+</p>
+
 ## Contributing
 
 Contributions are welcome! Please read our contributing guidelines before getting started.
