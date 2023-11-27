@@ -1,11 +1,19 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:gpt_app/pages/auth_page.dart';
 import 'package:gpt_app/pallete.dart';
 
-import 'home_page.dart';
+Future main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
 
-void main() {
-  runApp(const MyApp());
+  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
+      .then((_) {
+    runApp(MyApp());
+  });
 }
+
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -22,7 +30,7 @@ class MyApp extends StatelessWidget {
           backgroundColor: Pallete.whiteColor
         )
       ),
-      home: const HomePage(),
+      home: const AuthPage(),
     );
   }
 }
