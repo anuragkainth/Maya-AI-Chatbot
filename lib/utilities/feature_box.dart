@@ -1,4 +1,4 @@
-import 'package:gpt_app/pallete.dart';
+import 'package:gpt_app/constants/pallete.dart';
 import 'package:flutter/material.dart';
 
 class FeatureBox extends StatelessWidget {

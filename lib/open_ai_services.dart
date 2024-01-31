@@ -21,7 +21,7 @@ class OpenAIServices {
             {
               "role": "user",
               "content":
-                  "Does this message have words 'generate' and 'image' together in it?: $prompt . Simply answer with a yes or a no."
+                  "Does this message have words 'generate' and 'image' in it?: $prompt . Simply answer with a yes or a no."
             },
           ]
         }),

@@ -2,7 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gpt_app/pages/auth_page.dart';
-import 'package:gpt_app/pallete.dart';
+import 'package:gpt_app/constants/pallete.dart';
 
 Future main() async {
   WidgetsFlutterBinding.ensureInitialized();

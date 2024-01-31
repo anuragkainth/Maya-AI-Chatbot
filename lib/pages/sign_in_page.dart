@@ -45,11 +45,11 @@ class _SignInPageState extends State<SignInPage> {
     return Scaffold(
         appBar: AppBar(),
         body: SafeArea(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              SingleChildScrollView(
-                child: SizedBox(
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                SizedBox(
                   width: double.infinity,
                   child: Padding(
                     padding: EdgeInsets.symmetric(horizontal: 20.0),
@@ -230,18 +230,18 @@ class _SignInPageState extends State<SignInPage> {
                     ),
                   ),
                 ),
-              ),
-              Container(
-                width: double.infinity,
-                // color: kDefaultGreyColor,
-                child: AuthButton(
-                  overlayColor: kDefaultGreyColor,
-                  onPressed: signIn,
-                  text: 'Log In',
-                  color: Colors.deepOrange.shade700,
-                ),
-              )
-            ],
+                Container(
+                  width: double.infinity,
+                  // color: kDefaultGreyColor,
+                  child: AuthButton(
+                    overlayColor: kDefaultGreyColor,
+                    onPressed: signIn,
+                    text: 'Log In',
+                    color: Colors.deepOrange.shade700,
+                  ),
+                )
+              ],
+            ),
           ),
         ));
   }
